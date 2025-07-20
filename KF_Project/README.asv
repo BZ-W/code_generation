@@ -1,0 +1,65 @@
+
+    Note:
+    
+    MinGW64 Compiler; mex -setup
+    
+    hdlsetuptoolpath('ToolName','Xilinx Vivado','ToolPath','C:\Xilinx\Vivado\2023.1\bin\vivado.bat');
+    
+    load("KF_Calc_SUnit_Fixed_Src.m", '-mat');
+    
+    Test files are paired with corresponding Fun files; each file is responsible for either calculation or testing, separately.
+    
+    In Folder KF_Demo:
+        
+        S1: Base model of the Kalman Filter.
+        
+        S2: Base function model of the Kalman Filter. (Test by the 'test S2' script)
+        
+            S21: Basic function to calculate Kalman Filter results.
+            
+            S22: Modularized Kalman Filter computation function.
+            
+            S23: Simplified, modularized Kalman Filter computation function.
+    
+        S4: Base divider model based on the Goldschmidt algorithm.
+
+        S5: Basic function to calculate Goldschmidt algorithm. (Test by the 'test S5' script)
+            
+    In Folder KF_Demo_Fixed/KF_Fixed_proj: (Base S23 renamed as S3)
+    
+        "KF_Calc_SUnit_Fixed_Src.m" is used to generate the data set.
+    
+        S1: Prepares the fixed-point model of the Kalman Filter, with a wider data range than the base model.
+
+            (Generate large-range data by modifying 'END_T', 'i_Q', 'i_R', 'z', and 'x' values.)
+        
+            Generate test data;
+            
+        S2: Preloaded static data for targeted data comparison later.
+        
+        S3: Base function for preparing the fixed-point model of the Kalman Filter, based on a simplified data flow.
+        
+        S4: Kalman Filter model for comparing the prepared model with the fixed-point model.
+    
+    In Folder KF_Demo_Fixed/Div_Fixed_proj:
+    
+        S1: Base model of the Goldschmidt algorithm.
+        
+            Some data detection operations are abstracted in the top file, compared with KF_Demo/Div_Calc_BUnit_Test_S5.mlx.
+            
+            Some calculations are simplified for code generation (such as squaring operations and bit detection methods).
+        
+        S2: Fixed-point model of the Divider, with a wider data range than the base model.
+        
+            When loading data for comparison, use a random data set.
+
+        
+     Matlab Script: C_code/double -> Fixed -> RTL/Fixed
+     Simulink Model : Fixed -> C_code/Fixed -> RTL/Fixed -> RTL/Fixed TB -> RTL/Fixed Cosim
+
+        modelsim
+            do KF_Calc_Top_Fixed_compile.do
+            do KF_Calc_Top_Fixed_tb_compile.do
+            do KF_Calc_Top_Fixed_tb_sim.do
+
+        cosimWizard
